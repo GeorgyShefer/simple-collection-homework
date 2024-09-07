@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 public class PhoneBook {
     private Map<String, Set<String>> contactBook = new HashMap<>();
 
+
+
     public void addContact(String name, String phone) {
         // TODO проверь корректность формата имени и телефона
         // TODO (рекомендуется написать отдельные методы для проверки является строка именем/телефоном)
@@ -26,10 +28,7 @@ public class PhoneBook {
     public boolean isValidPhone(String phone){
         return phone.matches("\\d{11}");
     }
-    //Может быть новое имя и новый телефон x
-    //New name and old phone
-    //Old name and new phone X
-    //Old name and old phone
+
     public Set<String> getContactByName(String name) {
         // TODO формат одного контакта "Имя - Телефон"
         // TODO если контакт не найден - вернуть пустой TreeSet
@@ -43,8 +42,10 @@ public class PhoneBook {
         }
        return contactBook.entrySet().stream()
                 .filter(e -> e.getKey().contains(name))
-                .flatMap(e -> e.getValue().stream())
-                .collect(Collectors.toSet());
+                .flatMap(e -> e.getValue().stream()
+                        .map(phone -> e.getKey() + " - " + phone))
+                .collect(Collectors.toCollection(TreeSet::new));
+
     }
 
     public String getContactByPhone(String phone) {
@@ -57,9 +58,9 @@ public class PhoneBook {
         }*/
        return contactBook.entrySet().stream()
                 .filter(e -> e.getValue().contains(phone))
-                .map(Map.Entry::getKey)
+                .map(e -> e.getKey() + " - " + phone)
                 .findFirst()
-                .orElse(" ");
+                .orElse("");
 
     }
 
@@ -71,8 +72,8 @@ public class PhoneBook {
         }*/
       return   contactBook.entrySet().stream()
                 .filter(e -> !e.getValue().isEmpty())
-                .flatMap(e -> e.getValue().stream())
-                .collect(Collectors.toSet());
+                .map(e -> e.getKey() + " - " + String.join(", ",e.getValue()))
+                .collect(Collectors.toCollection(TreeSet::new));
 
     }
 }
